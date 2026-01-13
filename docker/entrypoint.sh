@@ -13,18 +13,17 @@ fi
 # Update default vhost to match the port
 sed -ri "s/<VirtualHost \\*:80>/<VirtualHost *:${PORT}>/g" /etc/apache2/sites-available/000-default.conf
 
-# 1. Publish TastyIgniter core configs
+# 1. FORCE WIPE (Temporary to fix the PostgreSQL error)
+echo "Wiping database to fix Not Null violation..."
+php artisan db:wipe --force || true
+
+# 2. Publish TastyIgniter core configs
 echo "Publishing TastyIgniter configurations..."
 php artisan vendor:publish --tag=igniter-config --force || true
 
-# 2. Run TastyIgniter Update with --force to bypass production warning
+# 3. Run TastyIgniter Update (Fresh install)
 echo "Running TastyIgniter:up --force..."
 php artisan igniter:up --force --no-interaction
-
-# 3. Clear any old caches that might be blocking routes
-echo "Clearing caches..."
-php artisan config:clear
-php artisan route:clear
 
 # 4. Production Optimizations
 echo "Running production optimizations..."
