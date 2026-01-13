@@ -13,15 +13,19 @@ fi
 # Update default vhost to match the port
 sed -ri "s/<VirtualHost \\*:80>/<VirtualHost *:${PORT}>/g" /etc/apache2/sites-available/000-default.conf
 
-# Production Optimizations
+# 1. Publish TastyIgniter core configs if they don't exist
+echo "Publishing TastyIgniter configurations..."
+php artisan vendor:publish --tag=igniter-config --force || true
+
+# 2. Run TastyIgniter Update (This handles TI-specific migrations and extensions)
+echo "Running TastyIgniter:up..."
+php artisan igniter:up --no-interaction
+
+# 3. Standard Production Optimizations
 echo "Running production optimizations..."
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
-
-# Run migrations automatically (safe for production with --force)
-echo "Running migrations..."
-php artisan migrate --force
 
 echo "Starting Apache..."
 exec apache2-foreground
