@@ -13,15 +13,20 @@ fi
 # Update default vhost to match the port
 sed -ri "s/<VirtualHost \\*:80>/<VirtualHost *:${PORT}>/g" /etc/apache2/sites-available/000-default.conf
 
-# 1. Publish TastyIgniter core configs if they don't exist
+# 1. Publish TastyIgniter core configs
 echo "Publishing TastyIgniter configurations..."
 php artisan vendor:publish --tag=igniter-config --force || true
 
-# 2. Run TastyIgniter Update (This handles TI-specific migrations and extensions)
-echo "Running TastyIgniter:up..."
-php artisan igniter:up --no-interaction
+# 2. Run TastyIgniter Update with --force to bypass production warning
+echo "Running TastyIgniter:up --force..."
+php artisan igniter:up --force --no-interaction
 
-# 3. Standard Production Optimizations
+# 3. Clear any old caches that might be blocking routes
+echo "Clearing caches..."
+php artisan config:clear
+php artisan route:clear
+
+# 4. Production Optimizations
 echo "Running production optimizations..."
 php artisan config:cache
 php artisan route:cache
