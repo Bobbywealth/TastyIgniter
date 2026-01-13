@@ -3,26 +3,24 @@ set -euo pipefail
 
 PORT="${PORT:-80}"
 
-# Configure Apache to listen on Render's dynamic port.
+# Configure Apache
 if grep -qE '^Listen ' /etc/apache2/ports.conf; then
   sed -ri "s/^Listen .*/Listen ${PORT}/" /etc/apache2/ports.conf
 else
   echo "Listen ${PORT}" >> /etc/apache2/ports.conf
 fi
-
-# Update default vhost to match the port
 sed -ri "s/<VirtualHost \\*:80>/<VirtualHost *:${PORT}>/g" /etc/apache2/sites-available/000-default.conf
 
-# 1. Publish TastyIgniter core configs
-echo "Publishing TastyIgniter configurations..."
-php artisan vendor:publish --tag=igniter-config --force || true
+# --- THE "LIVE NOW" FIX ---
+echo "Cleaning up database constraints..."
+# This fixes the 'Dependent objects still exist' error for PostgreSQL
+php artisan tinker --execute="try { Schema::hasTable('admin_users') && DB::statement('ALTER TABLE admin_users DROP CONSTRAINT IF EXISTS admin_users_staff_id_unique CASCADE'); } catch (\Exception \$e) {}"
 
-# 2. Run TastyIgniter Update (Fresh install/Update)
-echo "Running TastyIgniter:up --force..."
+echo "Running TastyIgniter:up..."
 php artisan igniter:up --force --no-interaction
 
-# 3. Production Optimizations
-echo "Running production optimizations..."
+# Ensure we have the basic setup
+echo "Optimizing..."
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
