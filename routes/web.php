@@ -7,12 +7,13 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
 */
 
-Route::get('/', [MarketingController::class, 'index'])->name('marketing.index');
+// Move the Marketing Page to /marketing
+Route::get('/marketing', [MarketingController::class, 'index'])->name('marketing.index');
 Route::post('/subscribe', [MarketingController::class, 'subscribe'])->name('marketing.subscribe');
+
+// Redirect the home page to the Admin for now so you can set up the restaurant
+Route::get('/', function () {
+    return redirect('/admin');
+});
