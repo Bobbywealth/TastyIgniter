@@ -41,18 +41,21 @@ function main() {
   vapi.on('call-start', () => {
     startBtn.disabled = true;
     stopBtn.disabled = false;
+    stopBtn.classList.remove('hidden');
     setStatus('Call started.');
   });
 
   vapi.on('call-end', () => {
     startBtn.disabled = false;
     stopBtn.disabled = true;
+    stopBtn.classList.add('hidden');
     setStatus('Call ended.');
   });
 
   vapi.on('error', (err) => {
     startBtn.disabled = false;
     stopBtn.disabled = true;
+    stopBtn.classList.add('hidden');
     setStatus('Call error. Please try again.');
     // eslint-disable-next-line no-console
     console.error('Vapi error:', err);

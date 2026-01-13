@@ -56,7 +56,7 @@ RUN mkdir -p storage/framework/cache/data \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Install composer dependencies
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN COMPOSER_MEMORY_LIMIT=-1 composer install --no-dev --optimize-autoloader --no-interaction --verbose
 
 # Configure PHP for production (opcache)
 RUN { \

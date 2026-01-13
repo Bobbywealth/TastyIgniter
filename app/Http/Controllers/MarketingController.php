@@ -52,7 +52,7 @@ class MarketingController extends Controller
         // Send a welcome SMS notification
         $this->smsService->send(
             $lead->phone_number,
-            "Hi {$lead->name}, welcome to the WolfPaq! You'll receive our latest SMS marketing updates right here."
+            "Hi {$lead->name}, welcome to Sashey's Kitchen! You'll receive our latest updates right here."
         );
 
         // Optional: kick off an outbound AI call to greet/qualify the lead.
@@ -65,7 +65,7 @@ class MarketingController extends Controller
                 'leadName' => $lead->name,
                 'leadPhone' => $lead->phone_number,
                 'leadEmail' => $lead->email,
-                'context' => 'WolfPaq Marketing Lead',
+                'context' => 'Sashey\'s Kitchen Marketing Lead',
             ]
         );
 

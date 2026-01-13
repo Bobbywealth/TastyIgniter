@@ -23,14 +23,20 @@ php artisan tinker --execute="try { DB::statement(\"DROP INDEX IF EXISTS admin_u
 php artisan tinker --execute="try { DB::statement(\"DROP INDEX IF EXISTS coupon_id_index\"); } catch (\\Throwable \\$e) {}" >/dev/null 2>&1 || true
 
 echo "Running TastyIgniter:up (forced, non-interactive)..."
-php artisan igniter:up --force --no-interaction
+php artisan igniter:up --force --no-interaction || { echo "TastyIgniter:up failed!"; exit 1; }
 
 echo "Optimizing Laravel caches..."
-php artisan config:cache
-echo "Listing routes before caching..."
-php artisan route:list > /var/www/html/storage/logs/routes_before_cache.txt
-php artisan route:cache
-php artisan view:cache
+php artisan config:cache || echo "Config cache failed, continuing..."
+
+echo "Listing routes for debug..."
+mkdir -p /var/www/html/storage/logs
+php artisan route:list > /var/www/html/storage/logs/routes_before_cache.txt || echo "Route list failed, continuing..."
+
+echo "Caching routes..."
+php artisan route:cache || echo "Route cache failed, continuing..."
+
+echo "Caching views..."
+php artisan view:cache || echo "View cache failed, continuing..."
 
 echo "Starting Apache..."
 exec apache2-foreground
