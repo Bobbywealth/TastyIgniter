@@ -9,9 +9,8 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// The Marketing Page is the main entry point
-Route::get('/', [MarketingController::class, 'index'])->name('marketing.index');
+// Move Marketing to its own sub-page
+Route::get('/marketing', [MarketingController::class, 'index'])->name('marketing.index');
 Route::post('/subscribe', [MarketingController::class, 'subscribe'])->name('marketing.subscribe');
 
-// The TastyIgniter Admin is still at /admin
-// The TastyIgniter Storefront (if needed) will be handled by TI core routes
+// Leave the root "/" empty so TastyIgniter's restaurant theme can load automatically
