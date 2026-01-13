@@ -14,8 +14,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxml2-dev \
     unzip \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql pdo_pgsql zip mbstring xml \
-    && a2enmod rewrite \
+    && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql pdo_pgsql zip mbstring \    && 
+        && a2enmod rewrite \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Composer
