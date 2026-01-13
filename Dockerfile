@@ -39,12 +39,23 @@ COPY --from=assets-builder /app/public/css ./public/css
 COPY --from=assets-builder /app/public/js ./public/js
 COPY --from=assets-builder /app/mix-manifest.json ./public/mix-manifest.json
 
-# Set Apache DocumentRoot to public
-RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
-RUN sed -i 's|/var/www/|/var/www/html/public|g' /etc/apache2/apache2.conf
+# Set Apache DocumentRoot to public and listen on Render's PORT
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-# Set proper permissions
-RUN chown -R www-data:www-data /var/www/html \
+# Configure Apache to use the PORT environment variable provided by Render
+RUN sed -i 's/80/${PORT}/g' /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
+
+# Set proper permissions for Laravel and TastyIgniter
+RUN mkdir -p storage/framework/cache/data \
+    storage/framework/app/cache \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/igniter \
+    storage/logs \
+    bootstrap/cache \
+    && chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Install composer dependencies
@@ -60,8 +71,8 @@ RUN { \
     echo 'opcache.enable_cli=1'; \
     } > /usr/local/etc/php/conf.d/opcache-recommended.ini
 
-# Expose port (Render will override this, but 80 is default for Apache)
-EXPOSE 80
+# Set default port if not provided (Render provides this automatically)
+ENV PORT=80
+EXPOSE ${PORT}
 
-# The CMD remains the same
 CMD ["apache2-foreground"]
