@@ -23,6 +23,9 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
+                // #region agent log
+                file_put_contents('/Users/bobbyc/tasty igniter/TastyIgniter/.cursor/debug.log', json_encode(['id' => 'log_redirect_auth', 'timestamp' => microtime(true)*1000, 'location' => 'app/Http/Middleware/RedirectIfAuthenticated.php:27', 'message' => 'Redirecting authenticated user', 'data' => ['guard' => $guard, 'destination' => RouteServiceProvider::HOME], 'sessionId' => 'debug-session', 'hypothesisId' => 'C']) . PHP_EOL, FILE_APPEND);
+                // #endregion
                 return redirect(RouteServiceProvider::HOME);
             }
         }

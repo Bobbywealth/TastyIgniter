@@ -4,16 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Lead;
 use App\Services\SmsService;
+use App\Services\VapiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class MarketingController extends Controller
 {
     protected $smsService;
+    protected $vapiService;
 
-    public function __construct(SmsService $smsService)
+    public function __construct(SmsService $smsService, VapiService $vapiService)
     {
         $this->smsService = $smsService;
+        $this->vapiService = $vapiService;
     }
 
     /**
@@ -50,6 +53,20 @@ class MarketingController extends Controller
         $this->smsService->send(
             $lead->phone_number,
             "Hi {$lead->name}, welcome to the WolfPaq! You'll receive our latest SMS marketing updates right here."
+        );
+
+        // Optional: kick off an outbound AI call to greet/qualify the lead.
+        // Safe to leave enabled; it no-ops unless VAPI_API_KEY + VAPI_ASSISTANT_ID are configured.
+        $this->vapiService->createOutboundCall(
+            $lead->phone_number,
+            config('services.vapi.assistant_id'),
+            [
+                'leadId' => $lead->id,
+                'leadName' => $lead->name,
+                'leadPhone' => $lead->phone_number,
+                'leadEmail' => $lead->email,
+                'context' => 'WolfPaq Marketing Lead',
+            ]
         );
 
         return back()->with('success', 'Thank you for subscribing to our SMS marketing updates!');

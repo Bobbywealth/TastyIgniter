@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WolfPaq Marketing | SMS Marketing Solutions</title>
+    <meta name="vapi-public-key" content="{{ config('services.vapi.public_key') }}">
+    <meta name="vapi-assistant-id" content="{{ config('services.vapi.assistant_id') }}">
+    <meta name="vapi-metadata" content='@json(["source" => "marketing_page"])'>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Google Fonts -->
@@ -96,7 +99,14 @@
         <div class="container">
             <h1 class="hero-title">Scale Your Business with SMS Marketing</h1>
             <p class="hero-subtitle">Connect with your customers instantly. 98% open rates that drive real results.</p>
-            <a href="#subscribe" class="btn btn-primary-custom">Get Started Now</a>
+            <div class="d-flex justify-content-center gap-2 flex-wrap">
+                <a href="#subscribe" class="btn btn-primary-custom">Get Started Now</a>
+                <button type="button" id="vapi-start" class="btn btn-outline-light">Speak with an Agent</button>
+                <button type="button" id="vapi-stop" class="btn btn-outline-light" disabled>End Call</button>
+            </div>
+            <div class="mt-3 small opacity-75">
+                <span id="vapi-status">Loading voice assistant…</span>
+            </div>
         </div>
     </header>
 
@@ -186,5 +196,6 @@
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('js/marketing-vapi.js') }}"></script>
 </body>
 </html>
