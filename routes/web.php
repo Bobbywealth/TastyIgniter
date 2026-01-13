@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\MarketingController;
+use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -11,6 +14,5 @@
 |
 */
 
-//Route::get('/', function () {
-//    return view('welcome');
-//});
+Route::get('/', [MarketingController::class, 'index'])->name('marketing.index');
+Route::post('/subscribe', [MarketingController::class, 'subscribe'])->name('marketing.subscribe');
