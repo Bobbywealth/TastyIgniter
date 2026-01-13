@@ -9,11 +9,9 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// Move the Marketing Page to /marketing
-Route::get('/marketing', [MarketingController::class, 'index'])->name('marketing.index');
+// The Marketing Page is the main entry point
+Route::get('/', [MarketingController::class, 'index'])->name('marketing.index');
 Route::post('/subscribe', [MarketingController::class, 'subscribe'])->name('marketing.subscribe');
 
-// Redirect the home page to the Admin for now so you can set up the restaurant
-Route::get('/', function () {
-    return redirect('/admin');
-});
+// The TastyIgniter Admin is still at /admin
+// The TastyIgniter Storefront (if needed) will be handled by TI core routes
