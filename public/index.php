@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 define('LARAVEL_START', microtime(true));
 
 // #region agent log
-file_put_contents('/Users/bobbyc/tasty igniter/TastyIgniter/.cursor/debug.log', json_encode(['id' => 'log_index_start', 'timestamp' => microtime(true)*1000, 'location' => 'public/index.php:8', 'message' => 'Request started', 'data' => ['uri' => $_SERVER['REQUEST_URI'] ?? 'unknown', 'method' => $_SERVER['REQUEST_METHOD'] ?? 'unknown'], 'sessionId' => 'debug-session', 'hypothesisId' => 'A']) . PHP_EOL, FILE_APPEND);
+error_log("AGENT_DEBUG: " . json_encode(['id' => 'log_index_start', 'timestamp' => microtime(true)*1000, 'location' => 'public/index.php:8', 'message' => 'Request started', 'data' => ['uri' => $_SERVER['REQUEST_URI'] ?? 'unknown', 'method' => $_SERVER['REQUEST_METHOD'] ?? 'unknown'], 'sessionId' => 'debug-session', 'hypothesisId' => 'A']));
 // #endregion
 
 /*

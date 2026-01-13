@@ -27,6 +27,8 @@ php artisan igniter:up --force --no-interaction
 
 echo "Optimizing Laravel caches..."
 php artisan config:cache
+echo "Listing routes before caching..."
+php artisan route:list > /var/www/html/storage/logs/routes_before_cache.txt
 php artisan route:cache
 php artisan view:cache
 
