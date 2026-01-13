@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
+    libpq-dev \
     libzip-dev \
     libonig-dev \
     libxml2-dev \
@@ -39,13 +40,9 @@ COPY --from=assets-builder /app/public/css ./public/css
 COPY --from=assets-builder /app/public/js ./public/js
 COPY --from=assets-builder /app/mix-manifest.json ./public/mix-manifest.json
 
-# Set Apache DocumentRoot to public and listen on Render's PORT
-ENV APACHE_DOCUMENT_ROOT /var/www/html/public
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
-RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
-
-# Configure Apache to use the PORT environment variable provided by Render
-RUN sed -i 's/80/${PORT}/g' /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
+# Set Apache DocumentRoot to /public (safe, targeted edits)
+RUN sed -ri 's#DocumentRoot /var/www/html#DocumentRoot /var/www/html/public#g' /etc/apache2/sites-available/000-default.conf \
+    && sed -ri 's#<Directory /var/www/>#<Directory /var/www/html/public/>#g' /etc/apache2/apache2.conf
 
 # Set proper permissions for Laravel and TastyIgniter
 RUN mkdir -p storage/framework/cache/data \
@@ -71,8 +68,12 @@ RUN { \
     echo 'opcache.enable_cli=1'; \
     } > /usr/local/etc/php/conf.d/opcache-recommended.ini
 
-# Set default port if not provided (Render provides this automatically)
+# Render sets PORT; default to 80 for local runs
 ENV PORT=80
-EXPOSE ${PORT}
+EXPOSE 80
 
-CMD ["apache2-foreground"]
+# Entry point: configure Apache listen/vhost port from $PORT at runtime
+COPY docker/entrypoint.sh /usr/local/bin/render-entrypoint
+RUN chmod +x /usr/local/bin/render-entrypoint
+
+ENTRYPOINT ["/usr/local/bin/render-entrypoint"]
