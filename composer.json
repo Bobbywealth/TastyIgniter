@@ -33,16 +33,12 @@
       "url": "https://satis.tastyigniter.com"
     }
   },
-    "require": {
-        "php": "^8.3",
-        "laravel/framework": "^12.0",
-        "laravel/tinker": "^2.10.1",
-        "tastyigniter/core": "^4.0",
-        "tastyigniter/ti-ext-admin": "^4.0",
-        "tastyigniter/ti-ext-cart": "^4.0",
-        "tastyigniter/ti-ext-menus": "^4.0",
-        "tastyigniter/ti-theme-orange": "^4.0"
-    },
+  "require": {
+    "php": "^8.3",
+    "laravel/framework": "^12.0",
+    "laravel/tinker": "^2.10.1",
+    "tastyigniter/core": "^4.0"
+  },
   "require-dev": {
     "fakerphp/faker": "^1.23",
     "laravel/pail": "^1.2.2",
@@ -64,14 +60,14 @@
       "Tests\\": "tests/"
     }
   },
-    "scripts": {
-        "production-optimize": [
-            "@php artisan config:cache",
-            "@php artisan route:cache",
-            "@php artisan view:cache",
-            "@php artisan event:cache"
-        ],
-        "post-autoload-dump": [
+  "scripts": {
+    "production-optimize": [
+        "@php artisan config:cache",
+        "@php artisan route:cache",
+        "@php artisan view:cache",
+        "@php artisan event:cache"
+    ],
+    "post-autoload-dump": [
       "@php artisan config:clear",
       "@php artisan clear-compiled",
       "@php artisan package:discover --ansi"
