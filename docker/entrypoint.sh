@@ -11,17 +11,21 @@ else
 fi
 sed -ri "s/<VirtualHost \\*:80>/<VirtualHost *:${PORT}>/g" /etc/apache2/sites-available/000-default.conf
 
-# --- THE "NUKE & REBUILD" FIX ---
-echo "Nuking broken database to start fresh..."
-php artisan db:wipe --force || true
-
-echo "Running TastyIgniter:up..."
-php artisan igniter:up --force --no-interaction
-
-# Ensure core configurations are published
+# Publish TastyIgniter core configs (safe to re-run)
+echo "Publishing TastyIgniter configuration..."
 php artisan vendor:publish --tag=igniter-config --force || true
 
-echo "Optimizing..."
+# Pre-flight DB cleanup for PostgreSQL:
+# Some upstream TI migrations attempt to DROP INDEX where Postgres requires dropping the constraint instead.
+echo "Pre-flighting DB (PostgreSQL constraint/index cleanup)..."
+php artisan tinker --execute="try { DB::statement(\"ALTER TABLE admin_users DROP CONSTRAINT IF EXISTS admin_users_staff_id_unique\"); } catch (\\Throwable \\$e) {}" >/dev/null 2>&1 || true
+php artisan tinker --execute="try { DB::statement(\"DROP INDEX IF EXISTS admin_users_staff_id_unique\"); } catch (\\Throwable \\$e) {}" >/dev/null 2>&1 || true
+php artisan tinker --execute="try { DB::statement(\"DROP INDEX IF EXISTS coupon_id_index\"); } catch (\\Throwable \\$e) {}" >/dev/null 2>&1 || true
+
+echo "Running TastyIgniter:up (forced, non-interactive)..."
+php artisan igniter:up --force --no-interaction
+
+echo "Optimizing Laravel caches..."
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
