@@ -11,15 +11,16 @@ else
 fi
 sed -ri "s/<VirtualHost \\*:80>/<VirtualHost *:${PORT}>/g" /etc/apache2/sites-available/000-default.conf
 
-# --- THE "LIVE NOW" FIX ---
-echo "Cleaning up database constraints..."
-# This fixes the 'Dependent objects still exist' error for PostgreSQL
-php artisan tinker --execute="try { Schema::hasTable('admin_users') && DB::statement('ALTER TABLE admin_users DROP CONSTRAINT IF EXISTS admin_users_staff_id_unique CASCADE'); } catch (\Exception \$e) {}"
+# --- THE "NUKE & REBUILD" FIX ---
+echo "Nuking broken database to start fresh..."
+php artisan db:wipe --force || true
 
 echo "Running TastyIgniter:up..."
 php artisan igniter:up --force --no-interaction
 
-# Ensure we have the basic setup
+# Ensure core configurations are published
+php artisan vendor:publish --tag=igniter-config --force || true
+
 echo "Optimizing..."
 php artisan config:cache
 php artisan route:cache
