@@ -7,6 +7,7 @@ use App\Services\SmsService;
 use App\Services\VapiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class MarketingController extends Controller
 {
@@ -47,7 +48,12 @@ class MarketingController extends Controller
             return back()->withErrors($validator)->withInput();
         }
 
-        $lead = Lead::create($request->all());
+        try {
+            $lead = Lead::create($request->all());
+        } catch (\Exception $e) {
+            Log::error('Lead creation failed', ['error' => $e->getMessage()]);
+            throw $e;
+        }
 
         // Send a welcome SMS notification
         $this->smsService->send(
@@ -56,7 +62,6 @@ class MarketingController extends Controller
         );
 
         // Optional: kick off an outbound AI call to greet/qualify the lead.
-        // Safe to leave enabled; it no-ops unless VAPI_API_KEY + VAPI_ASSISTANT_ID are configured.
         $this->vapiService->createOutboundCall(
             $lead->phone_number,
             config('services.vapi.assistant_id'),

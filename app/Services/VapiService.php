@@ -23,10 +23,6 @@ class VapiService
     /**
      * Create an outbound phone call via Vapi.
      *
-     * Note: Vapi's exact payload fields depend on your telephony setup
-     * (Twilio/number provisioning). This method is designed to be easy
-     * to adjust once the specific Vapi call schema is confirmed.
-     *
      * @param  string  $toPhoneNumber  E.164 preferred, e.g. +15551234567
      * @param  string|null  $assistantId  Defaults to services.vapi.assistant_id
      * @param  array<string,mixed>  $metadata
@@ -42,7 +38,6 @@ class VapiService
         }
 
         $payload = [
-            // Common fields (may need adjustment per your Vapi account settings):
             'assistantId' => $assistantId,
             'customer' => [
                 'number' => $toPhoneNumber,
@@ -67,9 +62,6 @@ class VapiService
 
     /**
      * Verify webhook signature using a shared secret (simple HMAC scheme).
-     *
-     * If your Vapi account uses a different signature header format, update this
-     * method to match (e.g. vapi-signature, timestamps, etc).
      */
     public function verifyWebhookSignature(string $rawBody, ?string $signatureHeader): bool
     {
@@ -88,4 +80,3 @@ class VapiService
         return hash_equals($computed, $provided);
     }
 }
-

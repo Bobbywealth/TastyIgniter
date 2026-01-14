@@ -9,7 +9,19 @@ if grep -qE '^Listen ' /etc/apache2/ports.conf; then
 else
   echo "Listen ${PORT}" >> /etc/apache2/ports.conf
 fi
-sed -ri "s/<VirtualHost \\*:80>/<VirtualHost *:${PORT}>/g" /etc/apache2/sites-available/000-default.conf
+# Update both 000-default.conf and any other vhost to listen on $PORT
+find /etc/apache2/sites-available -name "*.conf" -exec sed -ri "s/<VirtualHost \*:80>/<VirtualHost *:${PORT}>/g" {} +
+
+# Wait for database connection (optional but recommended for Render)
+echo "Checking database connection..."
+for i in {1..30}; do
+  if php artisan tinker --execute="try { DB::connection()->getPdo(); exit(0); } catch (\Exception \$e) { exit(1); }" > /dev/null 2>&1; then
+    echo "Database is ready!"
+    break
+  fi
+  echo "Database not ready yet (attempt $i/30)..."
+  sleep 2
+done
 
 # Publish TastyIgniter core configs (safe to re-run)
 echo "Publishing TastyIgniter configuration..."
