@@ -23,9 +23,6 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                // #region agent log
-                error_log("AGENT_DEBUG: " . json_encode(['id' => 'log_redirect_auth', 'timestamp' => microtime(true)*1000, 'location' => 'app/Http/Middleware/RedirectIfAuthenticated.php:27', 'message' => 'Redirecting authenticated user', 'data' => ['guard' => $guard, 'destination' => \App\Providers\RouteServiceProvider::HOME], 'sessionId' => 'debug-session', 'hypothesisId' => 'C']));
-                // #endregion
                 return redirect(RouteServiceProvider::HOME);
             }
         }

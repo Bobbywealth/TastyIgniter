@@ -5,10 +5,6 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
-// #region agent log
-error_log("AGENT_DEBUG: " . json_encode(['id' => 'log_index_start', 'timestamp' => microtime(true)*1000, 'location' => 'public/index.php:8', 'message' => 'Request started', 'data' => ['uri' => $_SERVER['REQUEST_URI'] ?? 'unknown', 'method' => $_SERVER['REQUEST_METHOD'] ?? 'unknown'], 'sessionId' => 'debug-session', 'hypothesisId' => 'A']));
-// #endregion
-
 /*
 |--------------------------------------------------------------------------
 | Check If The Application Is Under Maintenance

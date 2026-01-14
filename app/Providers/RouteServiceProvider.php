@@ -26,9 +26,6 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // #region agent log
-        error_log("AGENT_DEBUG: " . json_encode(['id' => 'log_route_service_boot', 'timestamp' => microtime(true)*1000, 'location' => 'app/Providers/RouteServiceProvider.php:28', 'message' => 'RouteServiceProvider booting', 'data' => ['home_const' => self::HOME], 'sessionId' => 'debug-session', 'hypothesisId' => 'A']));
-        // #endregion
         $this->configureRateLimiting();
 
         $this->routes(function () {

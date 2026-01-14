@@ -1,5 +1,5 @@
 # Stage 1: Build assets
-FROM node:20-alpine AS assets-builder
+FROM node:18-alpine AS assets-builder
 WORKDIR /app
 COPY package*.json webpack.mix.js ./
 COPY resources ./resources
@@ -23,7 +23,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libonig-dev \
     libxml2-dev \
     libicu-dev \
-    libsqlite3-dev \
     unzip \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql pdo_pgsql zip mbstring xml intl bcmath opcache \
