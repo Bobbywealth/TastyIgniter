@@ -27,6 +27,15 @@ done
 echo "Publishing TastyIgniter configuration..."
 php artisan vendor:publish --tag=igniter-config --force || true
 
+# Ensure default theme exists and assets are published (fixes missing CSS/JS)
+if [ ! -d /var/www/html/themes/igniter-orange ]; then
+  echo "Installing default theme (igniter-orange)..."
+  php artisan igniter:theme-install igniter-orange --no-interaction || echo "Theme install failed, continuing..."
+fi
+echo "Publishing theme assets..."
+php artisan igniter:theme-publish --no-interaction || echo "Theme publish failed, continuing..."
+php artisan igniter:theme-vendor-publish --no-interaction || echo "Theme vendor publish failed, continuing..."
+
 # Pre-flight DB cleanup for PostgreSQL:
 # Some upstream TI migrations attempt to DROP INDEX where Postgres requires dropping the constraint instead.
 echo "Pre-flighting DB (PostgreSQL constraint/index cleanup)..."
