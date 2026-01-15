@@ -36,6 +36,10 @@ echo "Publishing theme assets..."
 php artisan igniter:theme-publish --no-interaction || echo "Theme publish failed, continuing..."
 php artisan igniter:theme-vendor-publish --no-interaction || echo "Theme vendor publish failed, continuing..."
 
+# Ensure public storage symlink exists for media uploads
+echo "Ensuring public storage symlink..."
+php artisan storage:link || echo "Storage link failed, continuing..."
+
 # Pre-flight DB cleanup for PostgreSQL:
 # Some upstream TI migrations attempt to DROP INDEX where Postgres requires dropping the constraint instead.
 echo "Pre-flighting DB (PostgreSQL constraint/index cleanup)..."
