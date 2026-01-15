@@ -1,3 +1,6 @@
+<link href="{{ asset('css/app.css') }}" rel="stylesheet">
+<script defer src="https://unpkg.com/lucide@latest"></script>
+
 <div class="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-6 mesh-gradient overflow-hidden relative">
     <!-- Background Accents -->
     <div class="absolute inset-0 z-0 pointer-events-none">
