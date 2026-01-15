@@ -27,6 +27,11 @@ done
 echo "Publishing TastyIgniter configuration..."
 php artisan vendor:publish --tag=igniter-config --force || true
 
+# Ensure storage directories exist and are writable (sessions/logs)
+echo "Ensuring storage directories are writable..."
+mkdir -p /var/www/html/storage/framework/sessions /var/www/html/storage/logs
+chmod -R ug+rw /var/www/html/storage /var/www/html/bootstrap/cache || true
+
 # Ensure default theme exists and assets are published (fixes missing CSS/JS)
 if [ ! -d /var/www/html/themes/igniter-orange ]; then
   echo "Installing default theme (igniter-orange)..."
