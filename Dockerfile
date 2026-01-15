@@ -42,7 +42,8 @@ COPY --from=assets-builder /app/mix-manifest.json ./public/mix-manifest.json
 
 # Set Apache DocumentRoot to /public (safe, targeted edits)
 RUN sed -ri 's#DocumentRoot /var/www/html#DocumentRoot /var/www/html/public#g' /etc/apache2/sites-available/000-default.conf \
-    && sed -ri 's#<Directory /var/www/>#<Directory /var/www/html/public/>#g' /etc/apache2/apache2.conf
+    && sed -ri 's#<Directory /var/www/>#<Directory /var/www/html/public/>#g' /etc/apache2/apache2.conf \
+    && sed -ri '/<Directory \\/var\\/www\\/html\\/public\\/>/,/<\\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
 
 # Set proper permissions for Laravel and TastyIgniter
 RUN mkdir -p storage/framework/cache/data \
