@@ -36,6 +36,19 @@ echo "Publishing theme assets..."
 php artisan igniter:theme-publish --no-interaction || echo "Theme publish failed, continuing..."
 php artisan igniter:theme-vendor-publish --no-interaction || echo "Theme vendor publish failed, continuing..."
 
+# Patch theme geocoder to use local proxy instead of Nominatim directly
+echo "Patching theme geocoder endpoints..."
+for theme_path in /var/www/html/themes /var/www/html/public/themes; do
+  if [ -d "$theme_path" ]; then
+    while IFS= read -r -d '' file; do
+      sed -i \
+        -e 's#https://nominatim.openstreetmap.org#/geocode#g' \
+        -e 's#//nominatim.openstreetmap.org#/geocode#g' \
+        "$file"
+    done < <(grep -rlZ "nominatim.openstreetmap.org" "$theme_path" 2>/dev/null || true)
+  fi
+done
+
 # Ensure public storage symlink exists for media uploads
 echo "Ensuring public storage symlink..."
 php artisan storage:link || echo "Storage link failed, continuing..."

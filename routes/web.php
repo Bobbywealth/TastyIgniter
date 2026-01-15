@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GeocodeController;
 use App\Http\Controllers\MarketingController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +16,9 @@ use Illuminate\Support\Facades\Route;
  */
 Route::get('/marketing', [MarketingController::class, 'index'])->name('marketing.index');
 Route::post('/subscribe', [MarketingController::class, 'subscribe'])->name('marketing.subscribe');
+
+// Proxy geocoding requests to avoid browser-side Nominatim blocks
+Route::get('/geocode/search', [GeocodeController::class, 'search'])->name('geocode.search');
 
 /**
  * THE HOME PAGE (/)
