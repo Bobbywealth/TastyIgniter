@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\VapiWebhookController;
+use App\Http\Controllers\ServioWebhookController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +17,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/vapi/webhook', [VapiWebhookController::class, 'handle'])
     ->name('vapi.webhook');
+
+// Servio Voice AI Integration
+Route::prefix('servio')->group(function () {
+    Route::post('/order', [ServioWebhookController::class, 'order']);
+    Route::get('/menu', [ServioWebhookController::class, 'menu']);
+});
